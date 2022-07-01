@@ -1,0 +1,84 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.example.feature_favourite_impl'
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 32
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    viewBinding{
+        enabled = true
+    }
+    sourceSets {
+        main {
+            res {
+                srcDirs = ['src\\main\\res']
+            }
+        }
+    }
+}
+
+dependencies {
+    //Moxy
+    implementation 'com.github.moxy-community:moxy-androidx:2.2.2'
+    implementation 'com.github.moxy-community:moxy-android:2.2.2'
+    kapt "com.github.moxy-community:moxy-compiler:2.2.2"
+
+    //Dagger2
+    implementation 'com.google.dagger:dagger:2.40'
+    kapt 'com.google.dagger:dagger-compiler:2.40'
+
+    //RxJava
+    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.13'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+
+    //RxAndroid
+    implementation group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.1.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.2.0'
+
+    //Cicerone
+    implementation group: 'com.github.terrakok', name: 'cicerone', version: '7.1'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
+
+    //Room
+    def room_version = "2.4.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
+
+
+    implementation project(':feature-favourite-api')
+    implementation project(':core-app-api')
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}

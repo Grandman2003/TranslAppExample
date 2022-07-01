@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/materialButton"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        app:elevation="10dp"
+        app:cornerRadius="20dp"
+        app:backgroundTint="@android:color/holo_red_light"
+        android:layout_marginStart="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/to_lang"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/from_lang"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/from_lang"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="15dp"
+        android:minHeight="30dp"
+        android:layout_marginTop="10dp"
+        android:outlineProvider="bounds"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/materialButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/kasp_dygreen"
+        app:strokeWidth="2dp">
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="50dp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/to_lang"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:minHeight="30dp"
+        android:outlineProvider="bounds"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/from_lang"
+        app:layout_constraintStart_toStartOf="@+id/from_lang"
+        app:layout_constraintTop_toBottomOf="@id/from_lang"
+        app:strokeColor="@color/kasp_dygreen"
+        app:strokeWidth="2dp">
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="50dp" />
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

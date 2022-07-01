@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name" translatable="false">KaspTranslate</string>
+    <string name="title_feature_favourites_api">feature-favourites-api</string>
+    <string name="favour_title">Favourites</string>
+</resources>
