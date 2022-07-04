@@ -8,3 +8,6 @@ import javax.inject.Scope
 
 @Scope
 annotation class TranslURL
+
+@Scope
+annotation class DaoContext

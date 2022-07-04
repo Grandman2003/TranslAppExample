@@ -64,11 +64,6 @@ dependencies {
     implementation group: 'com.github.terrakok', name: 'cicerone', version: '7.1'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
 
-    //Room
-    def room_version = "2.4.2"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-rxjava2:$room_version"
 
 
     implementation project(':feature-favourite-api')

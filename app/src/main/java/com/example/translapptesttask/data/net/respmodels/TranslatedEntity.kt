@@ -1,15 +1,16 @@
-package com.example.feature_favourite_impl.data.repos.models
+package com.example.translapptesttask.data.net.respmodels
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "favourites")
-data class FavouriteTranslatedEntity(
+@Entity(tableName = "dictionary")
+data class TranslatedEntity(
     val text: String,
     val translation: String,
     val fromLang: String,
     val toLang: String,
-    val partOfSpeech: String= ""
+    val partOfSpeech: String= "",
+    val isFavourite: Boolean = false
 ) {
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 }

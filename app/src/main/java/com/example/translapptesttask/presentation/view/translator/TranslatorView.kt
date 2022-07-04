@@ -1,8 +1,10 @@
 package com.example.translapptesttask.presentation.view.translator
 
+import com.example.translapptesttask.domain.models.TranslationRequest
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.AddToEndStrategy
+import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 interface TranslatorView: MvpView {
@@ -11,4 +13,8 @@ interface TranslatorView: MvpView {
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
     fun showRequsetError()
+
+    @StateStrategyType(value = AddToEndStrategy::class)
+    fun setAsFavourite(isFavourite: Boolean)
+
 }

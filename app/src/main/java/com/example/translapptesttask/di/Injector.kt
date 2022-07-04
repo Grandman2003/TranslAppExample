@@ -6,6 +6,4 @@ import com.example.translapptesttask.domain.translator.ProjectParameters
 
 object Injector {
     val appComponent: AppComponent = DaggerAppComponent.create()
-    val translatorComponent by lazy {appComponent.translateComponent().withTranslURL(
-        ProjectParameters.TRANSL_URL.value).build()}
 }
