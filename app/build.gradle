@@ -1,7 +1,15 @@
+buildscript {
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.2.1"
+    }
+}
+
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id "io.gitlab.arturbosch.detekt"
 }
 
 android {
@@ -17,7 +25,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -64,6 +71,7 @@ dependencies {
     //Cicerone
     implementation 'com.github.terrakok:cicerone:7.1'
 
+    //Room
     def room_version = "2.4.2"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -72,6 +80,10 @@ dependencies {
     implementation project(':feature-favourite-api')
     implementation project(':feature-favourite-impl')
     implementation project(':core-app-api')
+
+    detekt project(path: ':feature-favourite-api', configuration: "default")
+    detekt project(path: ':feature-favourite-impl', configuration: "default")
+    detekt project(path: ':core-app-api', configuration: "default")
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'

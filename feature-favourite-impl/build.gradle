@@ -42,7 +42,11 @@ android {
     }
 }
 
+
 dependencies {
+    //Cicerone
+    implementation 'com.github.terrakok:cicerone:7.1'
+
     //Moxy
     implementation 'com.github.moxy-community:moxy-androidx:2.2.2'
     implementation 'com.github.moxy-community:moxy-android:2.2.2'
@@ -59,12 +63,6 @@ dependencies {
     //RxAndroid
     implementation group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.1.1'
     implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.2.0'
-
-    //Cicerone
-    implementation group: 'com.github.terrakok', name: 'cicerone', version: '7.1'
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
-
-
 
     implementation project(':feature-favourite-api')
     implementation project(':core-app-api')

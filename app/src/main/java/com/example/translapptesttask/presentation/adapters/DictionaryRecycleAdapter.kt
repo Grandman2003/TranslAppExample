@@ -1,52 +1,35 @@
 package com.example.translapptesttask.presentation.adapters
 
-import android.app.Application
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.example.translapptesttask.data.databases.DictionaryDao
-import com.example.translapptesttask.data.net.respmodels.TranslatedEntity
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import com.example.core_app_api.models.TranslatedEntity
 import com.example.translapptesttask.databinding.DictItemBinding
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
-class DictionaryRecycleAdapter(
-    private val daoDict: DictionaryDao): RecyclerView.Adapter<DictionaryItemHolder>() {
-    val disposableHoldersBag = CompositeDisposable()
-    var elementCount = 0
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DictionaryItemHolder
-        =DictionaryItemHolder(
-        DictItemBinding.inflate(LayoutInflater.from(parent.context),parent,false))
-    init {
-        disposableHoldersBag.add(Single.create<Int> {
-                it.onSuccess(daoDict.getWordsCount())
-        }   .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-            elementCount = it
-        }, {
-        }))
-    }
+class DictionaryRecycleAdapter :
+    ListAdapter<TranslatedEntity, DictionaryItemHolder>(DIFF_UTIL_ITEM_CALLBACK) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DictionaryItemHolder =
+        DictionaryItemHolder(
+            DictItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
 
     override fun onBindViewHolder(holder: DictionaryItemHolder, position: Int) {
-        val holderDisposable = Single.create<TranslatedEntity> {
-                it.onSuccess(daoDict.findById(position))
-        }   .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe (
-                {
-                    holder.onBind(it)
-                },{})
-        disposableHoldersBag.add(holderDisposable)
+        holder.onBind(getItem(position))
     }
 
-    override fun getItemCount(): Int = elementCount
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        disposableHoldersBag.clear()
+    private companion object {
+        val DIFF_UTIL_ITEM_CALLBACK = object : DiffUtil.ItemCallback<TranslatedEntity>() {
+            override fun areItemsTheSame(
+                oldItem: TranslatedEntity,
+                newItem: TranslatedEntity
+            ): Boolean = (oldItem.text == newItem.text)
+
+            override fun areContentsTheSame(
+                oldItem: TranslatedEntity,
+                newItem: TranslatedEntity
+            ): Boolean = (oldItem == newItem)
+        }
     }
 }

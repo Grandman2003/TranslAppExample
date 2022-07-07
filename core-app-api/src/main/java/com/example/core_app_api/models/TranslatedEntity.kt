@@ -1,4 +1,4 @@
-package com.example.translapptesttask.data.net.respmodels
+package com.example.core_app_api.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,8 +9,8 @@ data class TranslatedEntity(
     val translation: String,
     val fromLang: String,
     val toLang: String,
-    val partOfSpeech: String= "",
-    val isFavourite: Boolean = false
+    val partOfSpeech: String = "",
+    var isFavourite: Boolean = false
 ) {
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 }

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -10,7 +11,6 @@ android {
     defaultConfig {
         minSdk 26
         targetSdk 32
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -31,6 +31,17 @@ android {
 }
 
 dependencies {
+    //Cicerone
+    implementation 'com.github.terrakok:cicerone:7.1'
+
+    //Room
+    def room_version = "2.4.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    //RxJava
+    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.13'
+
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
