@@ -1,34 +1,39 @@
 package com.example.translapptesttask.di.components
 
-import android.content.Context
-import com.example.translapptesttask.di.DaoContext
-import com.example.translapptesttask.di.TranslURL
-import com.example.translapptesttask.di.app.modules.DictionaryProvider
-import com.example.translapptesttask.di.app.modules.FavouritesModule
-import com.example.translapptesttask.di.app.modules.ImplProvider
-import com.example.translapptesttask.di.app.modules.TranslatorInteractorsProvider
-import com.example.translapptesttask.di.modules.RetrofitServiceProvider
+import com.example.core_app_api.TranslationApi
+import com.example.translapptesttask.di.PerFeature
+import com.example.translapptesttask.di.app.modules.AppModule
+import com.example.translapptesttask.di.app.providers.DictionaryProvider
+import com.example.translapptesttask.di.app.components.TranslationDependencies
+import com.example.translapptesttask.di.app.providers.TranslatorInteractorsProvider
+import com.example.translapptesttask.di.app.modules.TranslatorModule
+import com.example.translapptesttask.di.app.providers.RetrofitServiceProvider
 import com.example.translapptesttask.presentation.presenters.TranslatorPresenter
-import com.example.translapptesttask.presentation.view.translator.TranslateActivity
-import dagger.BindsInstance
-import dagger.Subcomponent
+import dagger.Component
 
-@Subcomponent(
+@Component(
     modules = [
         RetrofitServiceProvider::class,
         TranslatorInteractorsProvider::class,
         DictionaryProvider::class,
-        FavouritesModule::class,
-        ImplProvider::class
-    ]
+        TranslatorModule::class,
+        AppModule::class
+    ],
+    dependencies = [TranslationDependencies::class]
 )
-interface TranslatorComponent {
-    @Subcomponent.Builder
+@PerFeature
+abstract class TranslatorComponent : TranslationApi {
+    @Component.Builder
     interface Builder {
         fun build(): TranslatorComponent
-        @BindsInstance fun withTranslURL(@TranslURL url: String): Builder
-        @BindsInstance fun appContext(@DaoContext context: Context): Builder
+        fun setTranslationDependencies(translDependencies: TranslationDependencies): Builder
     }
-    fun inject(activity: TranslateActivity)
-    fun inject(presenter: TranslatorPresenter)
+    abstract fun inject(presenter: TranslatorPresenter)
+
+    companion object {
+        fun initAndGet(translDependencies: TranslationDependencies): TranslatorComponent =
+            DaggerTranslatorComponent.builder()
+                .setTranslationDependencies(translDependencies)
+                .build()
+    }
 }

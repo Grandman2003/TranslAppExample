@@ -16,9 +16,15 @@ interface TranslatorView : MvpView {
     @Skip
     fun showFavouriteError()
 
-    @AddToEnd
+    @Skip
     fun setAsFavourite(isFavourite: Boolean)
 
-    @AddToEndSingle
+    @Skip
+    fun setDeletingError()
+
+    @AddToEnd
     fun setDictionaryElements(entityList: List<TranslatedEntity>)
+
+    @Skip
+    fun cleanOutputField()
 }

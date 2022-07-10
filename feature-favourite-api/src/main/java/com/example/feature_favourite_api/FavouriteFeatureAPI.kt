@@ -1,5 +1,7 @@
 package com.example.feature_favourite_api
 
-interface FavouriteFeatureAPI {
+import com.example.module_injector.BaseApi
+
+interface FavouriteFeatureAPI : BaseApi {
     fun favouriteStarter(): FavouriteStarter
 }

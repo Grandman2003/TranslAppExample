@@ -28,28 +28,19 @@
                 app:layout_collapseMode="pin"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent">
+
                 <ImageButton
+                    android:id="@+id/back_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:elevation="10dp"
                     android:layout_marginEnd="10dp"
                     android:background="@android:color/transparent"
+                    android:elevation="10dp"
                     android:padding="5dp"
                     android:src="@drawable/ic_round_arrow_back" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:elevation="10dp"
-            android:id="@+id/back_button"
-            android:layout_marginEnd="10dp"
-            android:background="@android:color/transparent"
-            android:padding="5dp"
-            android:src="@drawable/ic_round_arrow_back" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -61,11 +52,11 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favourites_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:itemCount="5"
-            tools:listitem="@layout/favourite_item_view"
-            />
+            tools:listitem="@layout/favourite_item_view" />
     </androidx.core.widget.NestedScrollView>
 
 

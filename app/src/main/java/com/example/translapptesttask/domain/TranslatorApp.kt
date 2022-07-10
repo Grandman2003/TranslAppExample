@@ -1,13 +1,23 @@
 package com.example.translapptesttask.domain
 
 import android.app.Application
-import com.example.translapptesttask.di.Injector
-import com.example.translapptesttask.domain.translator.ProjectParameters
+import android.content.Context
+import com.example.translapptesttask.di.components.AppComponent
+import com.example.translapptesttask.di.components.DaggerAppComponent
 
 class TranslatorApp : Application() {
-    val translatorComponent by lazy {
-        Injector.appComponent.translateComponent().withTranslURL(
-            ProjectParameters.TRANSL_URL.value
-        ).appContext(applicationContext).build()
+    override fun onCreate() {
+        super.onCreate()
+        appContext = applicationContext
+        AppComponent.init(
+            DaggerAppComponent.builder().build()
+        )
+        AppComponent.get().inject(this)
+    }
+
+    companion object {
+        @Volatile
+        lateinit var appContext: Context
+            private set
     }
 }

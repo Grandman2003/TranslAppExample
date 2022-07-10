@@ -2,8 +2,8 @@ package com.example.translapptesttask.presentation.presenters
 
 import android.util.Log
 import com.example.core_app_api.TranslatorInteractor
-import com.example.core_app_api.models.TranslationRequest
-import com.example.translapptesttask.domain.translator.Screens
+import com.example.core_app_api.models.TranslatedEntity
+import com.example.feature_favourite_api.FavouriteFeatureAPI
 import com.example.translapptesttask.presentation.view.translator.TranslatorView
 import com.github.terrakok.cicerone.Router
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,12 +18,17 @@ import javax.inject.Inject
 class TranslatorPresenter : MvpPresenter<TranslatorView>() {
     @Inject lateinit var router: Router
     @Inject lateinit var translatorInteractor: TranslatorInteractor
+    @Inject lateinit var favouriteApi: FavouriteFeatureAPI
 
     private val disposeBag: CompositeDisposable = CompositeDisposable()
-    private var tempBool: Boolean = false
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        updateDictionary()
+    }
+
+    override fun attachView(view: TranslatorView?) {
+        super.attachView(view)
         updateDictionary()
     }
 
@@ -36,14 +41,25 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
             }.addToBag()
     }
 
-    fun translateTextCommand(traslationRequest: TranslationRequest) {
-        translatorInteractor.proceedTranslationRequest(traslationRequest)
+    fun translateTextCommand(
+        textForTranslation: String,
+        fromLanguage: String,
+        toLanguage: String,
+    ) {
+        translatorInteractor
+            .proceedTranslationRequest(textForTranslation, fromLanguage, toLanguage)
             .observeOn(AndroidSchedulers.mainThread())
+            .doAfterSuccess {
+                translatorInteractor
+                    .findSimilarInDictionary(it.text)
+                    .toList().subscribe { singleList ->
+                        viewState.setAsFavourite(singleList.get(0).isFavourite)
+                    }.addToBag()
+            }
             .subscribe(
                 {
                     viewState.showTranslation(it?.meanings?.get(0)?.translation?.text ?: " ")
                     updateDictionary()
-                    setAsFavourite(it.text)
                 },
                 {
                     Log.e("Oh NO, Error", it.localizedMessage ?: "No message")
@@ -55,14 +71,14 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
     fun setAsFavourite(textFavouriteWord: String) {
         translatorInteractor.run {
             Log.d("FavWord", "In Presenter $textFavouriteWord")
-            checkFavourites(textFavouriteWord)
+            checkAndChangeFavourites(textFavouriteWord)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { isFavourite ->
-                        viewState.setAsFavourite(isFavourite)
-                        updateDictionary()
-                    },
+                .doAfterSuccess { isFavourite ->
+                    viewState.setAsFavourite(isFavourite)
+                    updateDictionary()
+                }.subscribe(
+                    {},
                     { error ->
                         Log.e(".TranslatePresenter", error.localizedMessage, error)
                         viewState.showFavouriteError()
@@ -78,9 +94,26 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
             }.addToBag()
     }
 
-    fun toFavouriteScreen() = router.navigateTo(Screens.favouriteScreen())
+    fun toFavouriteScreen() {
+        router.navigateTo(favouriteApi.favouriteStarter().startScreen())
+    }
 
     private fun Disposable.addToBag() {
         disposeBag.add(this)
+    }
+
+    fun emptyInputField() {
+        viewState.cleanOutputField()
+    }
+
+    fun deleteFromDictionary(entity: TranslatedEntity) {
+        translatorInteractor
+            .deleteWordFromDictionary(entity)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                updateDictionary()
+            },{
+
+            }).addToBag()
     }
 }

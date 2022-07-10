@@ -2,11 +2,11 @@ package com.example.translapptesttask.domain.translator
 
 import android.util.Log
 import com.example.core_app_api.TranslatorInteractor
-import com.example.translapptesttask.data.net.interfaces.TranslateService
 import com.example.core_app_api.models.TranslatedEntity
 import com.example.core_app_api.models.TranslatedWord
+import com.example.translapptesttask.data.net.interfaces.TranslateService
 import com.example.translapptesttask.data.repositories.DictionaryRepository
-import com.example.core_app_api.models.TranslationRequest
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -18,25 +18,36 @@ class TranslatorInteractorImpl @Inject constructor(
     val dictionaryRepository: DictionaryRepository
 ) : TranslatorInteractor {
 
-    override fun checkFavourites(favouriteWord: String): Single<Boolean> {
+    override fun checkAndChangeFavourites(favouriteWord: String): Single<Boolean> {
         Log.d("FavWord", "In Interactor $favouriteWord")
         return dictionaryRepository
             .findCurrentWord(favouriteWord)
-            .map {
-                dictionaryRepository.updateIsFavouriteState(
-                    it.also { it.isFavourite = !it.isFavourite }
-                )
+            .doOnSuccess {
+                it.apply { isFavourite = !isFavourite }
+                dictionaryRepository.updateIsFavouriteState(it).subscribe()
+            }.map {
                 it.isFavourite
             }
     }
+
+    override fun deleteFavouriteFromDictionary(entity: TranslatedEntity): Completable =
+        dictionaryRepository.updateIsFavouriteState(
+            entity.apply {
+                this.isFavourite = !this.isFavourite
+            }
+        )
+
     override fun proceedTranslationRequest(
-        traslationRequest: TranslationRequest
+        textForTranslation: String,
+        fromLanguage: String,
+        toLanguage: String,
     ): Maybe<TranslatedWord> =
-        translService.getTranslation(traslationRequest.text)
+        translService
+            .getTranslation(textForTranslation)
             .subscribeOn(Schedulers.io())
             .flatMapMaybe { Maybe.just(it.get(0)) }
             .doOnSuccess {
-                dictionaryRepository.addToDictionary(it)
+                dictionaryRepository.addToDictionary(it).subscribe()
             }
 
     override fun getDictionaryWords(): Observable<TranslatedEntity> =
@@ -46,4 +57,7 @@ class TranslatorInteractorImpl @Inject constructor(
         getDictionaryWords().filter {
             it.translation.contains(partString) || it.text.contains(partString)
         }
+
+    override fun deleteWordFromDictionary(entity: TranslatedEntity): Completable =
+        dictionaryRepository.deleteFromDictionary(entity)
 }

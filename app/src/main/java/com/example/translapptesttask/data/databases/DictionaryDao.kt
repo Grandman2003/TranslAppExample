@@ -1,6 +1,7 @@
 package com.example.translapptesttask.data.databases
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.core_app_api.models.TranslatedEntity
@@ -20,7 +21,7 @@ interface DictionaryDao {
     fun isWordInDictionary(word: String): Single<Boolean>
 
     @Insert(entity = TranslatedEntity::class)
-    fun addToDictionaryTable(entity: TranslatedEntity)
+    fun addToDictionaryTable(entity: TranslatedEntity): Completable
 
     @Query("SELECT*FROM dictionary WHERE id= :id")
     fun findById(id: Int): Single<TranslatedEntity>
@@ -34,6 +35,12 @@ interface DictionaryDao {
     @Query("SELECT*FROM dictionary WHERE text= :text")
     fun findWordInDictionary(text: String): Single<TranslatedEntity>
 
-    @Query("UPDATE dictionary SET isFavourite= :isFavourite WHERE text= :text ")
-    fun updateFavouriteState(text: String, isFavourite: Boolean)
+    @Query("UPDATE dictionary SET isFavourite= :isFavourite WHERE text=:text AND translation=:traslation")
+    fun updateFavouriteState(text: String, traslation: String, isFavourite: Boolean): Completable
+
+    @Query("UPDATE dictionary SET isFavourite= :favourite")
+    fun allUnfavourite(favourite: Boolean = false)
+
+    @Delete(entity = TranslatedEntity::class)
+    fun deleteFromDictionary(entity: TranslatedEntity): Completable
 }

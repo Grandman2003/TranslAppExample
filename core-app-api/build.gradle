@@ -34,10 +34,15 @@ dependencies {
     //Cicerone
     implementation 'com.github.terrakok:cicerone:7.1'
 
+    implementation project(':module-injector')
+
     //Room
     def room_version = "2.4.2"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    //Cicerone
+    implementation 'com.github.terrakok:cicerone:7.1'
 
     //RxJava
     implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.13'

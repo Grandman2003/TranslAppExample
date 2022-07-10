@@ -7,6 +7,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
+        android:focusable="true"
         android:layout_marginHorizontal="12dp"
         android:layout_marginVertical="15dp"
         app:cardElevation="10dp"
@@ -24,7 +25,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/translatedWord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
@@ -38,7 +39,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/languages"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
@@ -46,7 +47,7 @@
                 android:layout_marginHorizontal="20dp"
                 android:textSize="12dp"
                 android:fontFamily="@font/montserrat_alternates_medium_italic"
-                app:layout_constraintBottom_toBottomOf="@+id/textView"
+                app:layout_constraintBottom_toBottomOf="@+id/translatedWord"
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <androidx.cardview.widget.CardView
@@ -62,7 +63,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/textView4"
+                        android:id="@+id/originWord"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TextView"
@@ -75,16 +76,15 @@
                         app:layout_constraintStart_toStartOf="parent" />
 
                     <TextView
-                        android:id="@+id/textView5"
+                        android:id="@+id/additional"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
                         android:fontFamily="@font/montserrat_alternates"
                         android:textColor="@color/white"
                         android:layout_marginHorizontal="10dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/textView4"
-                        app:layout_constraintStart_toEndOf="@+id/textView4"
-                        app:layout_constraintTop_toTopOf="@+id/textView4" />
+                        app:layout_constraintBottom_toBottomOf="@+id/originWord"
+                        app:layout_constraintStart_toEndOf="@+id/originWord"
+                        app:layout_constraintTop_toTopOf="@+id/originWord" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>

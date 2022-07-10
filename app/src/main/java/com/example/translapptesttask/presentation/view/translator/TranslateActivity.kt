@@ -2,17 +2,17 @@ package com.example.translapptesttask.presentation.view.translator
 
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.translapptesttask.R
 import com.example.core_app_api.models.TranslatedEntity
+import com.example.translapptesttask.R
 import com.example.translapptesttask.databinding.ActivityTranslateBinding
-import com.example.translapptesttask.di.app.modules.FavouritesModule
-import com.example.translapptesttask.domain.TranslatorApp
-import com.example.core_app_api.models.TranslationRequest
+import com.example.translapptesttask.di.components.AppComponent
+import com.example.translapptesttask.di.components.TranslatorComponent
 import com.example.translapptesttask.presentation.adapters.DictionaryRecycleAdapter
+import com.example.translapptesttask.presentation.adapters.ItemHelperDictionaryCallback
 import com.example.translapptesttask.presentation.presenters.TranslatorPresenter
 import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.widget.RxTextView
@@ -25,42 +25,38 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
-    // TODO: rename dirs - got it
-    // TODO: Interactors layer - got it (in process)
     // TODO: Switchmap - request filter(cancel previous)
-    // TODO: Per screen scopes only(presenters) - got it(in process)
-    // TODO: Add dictionary to app - third stage
     val disposeBag: CompositeDisposable = CompositeDisposable()
     lateinit var binding: ActivityTranslateBinding
     @InjectPresenter lateinit var translPresenter: TranslatorPresenter
-    @Inject lateinit var router: Router
     @Inject lateinit var navHolder: NavigatorHolder
+    @Inject lateinit var translationComponent: TranslatorComponent
     private val dictionaryAdapter: DictionaryRecycleAdapter =
         DictionaryRecycleAdapter()
-
-    private val navigator = object : AppNavigator(this, -1) {
-    }
+    private val navigator = object : AppNavigator(this, -1) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTranslateBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        (application as TranslatorApp).translatorComponent.inject(this)
+        AppComponent.get().inject(this)
+        translPresenter.apply { translationComponent.inject(this) }
         configuring()
     }
 
     fun configuring() {
         RxTextView.textChanges(binding.inputText)
-            .filter { !(it.isEmpty() || it.isBlank()) }
+            .filter {
+                if (it.isEmpty() || it.isBlank()) translPresenter.emptyInputField()
+                !(it.isEmpty()|| it.isBlank())
+            }
             .debounce(500, TimeUnit.MILLISECONDS)
             .subscribe({
                     inputText ->
                 translPresenter.translateTextCommand(
-                    TranslationRequest(
-                        inputText.toString(),
-                        binding.fromLangSpinner.selectedItem.toString(),
-                        binding.toLangSpinner.selectedItem.toString()
-                    )
+                    inputText.toString(),
+                    binding.fromLangSpinner.selectedItem.toString(),
+                    binding.toLangSpinner.selectedItem.toString(),
                 )
             }, {}).addToBag()
 
@@ -71,10 +67,7 @@ class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
             }, {}).addToBag()
 
         binding.toFavouritesButton.setOnClickListener {
-            // translPresenter.toFavouriteScreen()
-            // router.navigateTo(Screens.favouriteScreen())
-            // router.replaceScreen(Screens.tranlsateScreen())
-            startActivity(FavouritesModule.startStartFavouriteIntent(this))
+            translPresenter.toFavouriteScreen()
         }
 
         with(binding.fromLangSpinner) {
@@ -97,18 +90,22 @@ class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
         with(binding.dictList) {
             adapter = dictionaryAdapter
             layoutManager = LinearLayoutManager(context)
+            ItemTouchHelper(ItemHelperDictionaryCallback(translPresenter))
+                .attachToRecyclerView(this)
         }
     }
 
     @ProvidePresenter
-    fun getTranslationPresenter(): TranslatorPresenter = TranslatorPresenter().also {
-        (application as TranslatorApp).translatorComponent.inject(it)
-    }
+    fun getTranslationPresenter(): TranslatorPresenter = TranslatorPresenter()
 
     override fun onDestroy() {
         super.onDestroy()
-        navHolder.removeNavigator()
         disposeBag.clear()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        navHolder.removeNavigator()
     }
 
     override fun onResume() {
@@ -139,7 +136,15 @@ class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
         }
     }
 
+    override fun setDeletingError() {
+        Snackbar.make(binding.root, R.string.deleting_error, Snackbar.LENGTH_LONG).show()
+    }
+
     override fun setDictionaryElements(entityList: List<TranslatedEntity>) {
         dictionaryAdapter.submitList(entityList)
+    }
+
+    override fun cleanOutputField() {
+        binding.translatedText.text = ""
     }
 }

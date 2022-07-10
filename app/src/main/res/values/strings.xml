@@ -9,6 +9,7 @@
     <string name="lang_error">Choose different languages</string>
     <string name="trans_error">Translation error occurred</string>
     <string name="fav_error">Cannot add to favourites</string>
+    <string name="deleting_error">Cannot delete from dictionary</string>
     
     <string-array name="languagesFrom">
         <item>English</item>
