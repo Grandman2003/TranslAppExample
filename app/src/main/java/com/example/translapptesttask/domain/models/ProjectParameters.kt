@@ -1,4 +1,4 @@
-package com.example.translapptesttask.domain.translator
+package com.example.translapptesttask.domain.models
 
 enum class ProjectParameters(val value: String) {
     TRANSL_URL("https://dictionary.skyeng.ru/") {

@@ -1,6 +1,5 @@
 package com.example.translapptesttask.presentation.presenters
 
-import android.util.Log
 import com.example.core_app_api.TranslatorInteractor
 import com.example.core_app_api.models.TranslatedEntity
 import com.example.feature_favourite_api.FavouriteFeatureAPI
@@ -33,11 +32,9 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
     }
 
     private fun updateDictionary() {
-        Log.v("TranslPresenter", "Initialise Dictionary List")
         translatorInteractor.getDictionaryWords()
             .toList().subscribe { list ->
                 viewState.setDictionaryElements(list)
-                Log.v("TranslPresenter", "List size is${list.size}")
             }.addToBag()
     }
 
@@ -62,7 +59,6 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
                     updateDictionary()
                 },
                 {
-                    Log.e("Oh NO, Error", it.localizedMessage ?: "No message")
                     viewState.showRequsetError()
                 }
             ).addToBag()
@@ -70,7 +66,6 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
 
     fun setAsFavourite(textFavouriteWord: String) {
         translatorInteractor.run {
-            Log.d("FavWord", "In Presenter $textFavouriteWord")
             checkAndChangeFavourites(textFavouriteWord)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -80,7 +75,6 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
                 }.subscribe(
                     {},
                     { error ->
-                        Log.e(".TranslatePresenter", error.localizedMessage, error)
                         viewState.showFavouriteError()
                     }
                 ).addToBag()

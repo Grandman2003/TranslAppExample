@@ -16,6 +16,7 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import moxy.MvpAppCompatActivity
@@ -25,7 +26,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
-    // TODO: Switchmap - request filter(cancel previous)
     val disposeBag: CompositeDisposable = CompositeDisposable()
     lateinit var binding: ActivityTranslateBinding
     @InjectPresenter lateinit var translPresenter: TranslatorPresenter
@@ -46,11 +46,16 @@ class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
 
     fun configuring() {
         RxTextView.textChanges(binding.inputText)
-            .filter {
-                if (it.isEmpty() || it.isBlank()) translPresenter.emptyInputField()
-                !(it.isEmpty()|| it.isBlank())
-            }
             .debounce(500, TimeUnit.MILLISECONDS)
+            .switchMap {
+                when (it.isEmpty() || it.isBlank()) {
+                    true -> Observable.empty()
+                    else -> Observable.just(it)
+                }
+            }
+            .switchIfEmpty {
+                it.onComplete()
+            }
             .subscribe({
                     inputText ->
                 translPresenter.translateTextCommand(
@@ -58,7 +63,7 @@ class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
                     binding.fromLangSpinner.selectedItem.toString(),
                     binding.toLangSpinner.selectedItem.toString(),
                 )
-            }, {}).addToBag()
+            }, {}, { translPresenter.emptyInputField() }).addToBag()
 
         RxTextView.textChanges(binding.searchDict)
             .debounce(500, TimeUnit.MILLISECONDS)

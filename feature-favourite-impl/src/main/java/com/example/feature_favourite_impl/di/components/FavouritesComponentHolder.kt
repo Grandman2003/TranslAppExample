@@ -1,6 +1,5 @@
 package com.example.feature_favourite_impl.di.components
 
-import android.util.Log
 import com.example.feature_favourite_api.FavouriteFeatureAPI
 import com.example.module_injector.ComponentHolder
 
@@ -10,7 +9,6 @@ object FavouritesComponentHolder : ComponentHolder<FavouriteFeatureAPI, Favourit
         if (favouriteComponent == null) {
             synchronized(FavouritesComponentHolder::class.java) {
                 if (favouriteComponent == null) {
-                    Log.i("ScannerFeatureCH", "initAndGet()")
                     favouriteComponent = FavouriteComponent.initAndGet(dependencies)
                 }
             }
@@ -26,7 +24,6 @@ object FavouritesComponentHolder : ComponentHolder<FavouriteFeatureAPI, Favourit
     }
 
     override fun reset() {
-        Log.i("FavpuritesFeatureCH", "reset()")
         favouriteComponent = null
     }
 }

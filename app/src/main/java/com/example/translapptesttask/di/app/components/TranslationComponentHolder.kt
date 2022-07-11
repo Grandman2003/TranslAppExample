@@ -1,6 +1,5 @@
 package com.example.translapptesttask.di.app.components
 
-import android.util.Log
 import com.example.core_app_api.TranslationApi
 import com.example.feature_favourite_impl.di.components.FavouritesComponentHolder
 import com.example.module_injector.ComponentHolder
@@ -14,7 +13,6 @@ object TranslationComponentHolder : ComponentHolder< TranslationApi, Translation
         if (translComponent == null) {
             synchronized(FavouritesComponentHolder::class.java) {
                 if (translComponent == null) {
-                    Log.i("ScannerFeatureCH", "initAndGet()")
                     translComponent =
                         TranslatorComponent.initAndGet(dependencies)
                 }
@@ -32,7 +30,6 @@ object TranslationComponentHolder : ComponentHolder< TranslationApi, Translation
     }
 
     override fun reset() {
-        Log.i("FavpuritesFeatureCH", "reset()")
         translComponent = null
     }
 }

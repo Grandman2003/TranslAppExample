@@ -10,7 +10,7 @@ import com.example.translapptesttask.di.app.components.TranslationComponentHolde
 import com.example.translapptesttask.di.app.components.TranslationDependencies
 import com.example.translapptesttask.di.components.TranslatorComponent
 import com.example.translapptesttask.domain.TranslatorApp
-import com.example.translapptesttask.domain.translator.ProjectParameters
+import com.example.translapptesttask.domain.models.ProjectParameters
 import com.github.terrakok.cicerone.Router
 import dagger.Module
 import dagger.Provides

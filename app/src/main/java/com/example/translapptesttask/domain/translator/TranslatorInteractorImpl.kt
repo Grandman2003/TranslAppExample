@@ -1,6 +1,5 @@
 package com.example.translapptesttask.domain.translator
 
-import android.util.Log
 import com.example.core_app_api.TranslatorInteractor
 import com.example.core_app_api.models.TranslatedEntity
 import com.example.core_app_api.models.TranslatedWord
@@ -19,7 +18,6 @@ class TranslatorInteractorImpl @Inject constructor(
 ) : TranslatorInteractor {
 
     override fun checkAndChangeFavourites(favouriteWord: String): Single<Boolean> {
-        Log.d("FavWord", "In Interactor $favouriteWord")
         return dictionaryRepository
             .findCurrentWord(favouriteWord)
             .doOnSuccess {
