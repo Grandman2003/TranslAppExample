@@ -44,8 +44,9 @@ dependencies {
     //Moxy
     implementation 'com.github.moxy-community:moxy-androidx:2.2.2'
     implementation 'com.github.moxy-community:moxy-android:2.2.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'junit:junit:4.13.2'
+    //testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
     kapt "com.github.moxy-community:moxy-compiler:2.2.2"
 

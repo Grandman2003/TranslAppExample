@@ -8,25 +8,30 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class DictionaryRepositoyrImpl(private val dao: DictionaryDao) : DictionaryRepository {
+class DictionaryRepositoyrImpl @Inject constructor(private val dao: DictionaryDao) : DictionaryRepository {
 
-    override fun addToDictionary(translatedWord: TranslatedWord): Completable {
-        val entity = TransformerImpl.getTranslatedEntity(translatedWord)
-        return when (!dao.isWordInDictionary(entity.text).blockingGet()) {
-            true -> dao.addToDictionaryTable(entity)
-            else -> Completable.complete()
-        }.subscribeOn(Schedulers.io())
-    }
+    override fun addToDictionary(translatedWord: TranslatedWord): Completable =
+        dao
+            .isWordInDictionary(translatedWord.text)
+            .flatMapCompletable {
+                val entity = TransformerImpl.getTranslatedEntity(translatedWord)
+                when (!it) {
+                    true -> dao.addToDictionaryTable(entity)
+                    else -> Completable.complete()
+                }
+            }.subscribeOn(Schedulers.io())
 
     override fun getWordsFromRepo(): Observable<TranslatedEntity> {
         return dao.getAllWords()
+            .firstElement()
             .flatMapObservable { Observable.fromIterable(it) }
             .subscribeOn(Schedulers.io())
     }
 
     override fun findCurrentWord(word: String): Single<TranslatedEntity> {
-        return dao.findWordInDictionary(word)
+        return dao.findWordInDictionary(word).subscribeOn(Schedulers.io())
     }
 
     override fun updateIsFavouriteState(entity: TranslatedEntity): Completable =

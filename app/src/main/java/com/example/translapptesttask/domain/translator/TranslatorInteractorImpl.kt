@@ -17,15 +17,10 @@ class TranslatorInteractorImpl @Inject constructor(
     val dictionaryRepository: DictionaryRepository
 ) : TranslatorInteractor {
 
-    override fun checkAndChangeFavourites(favouriteWord: String): Single<Boolean> {
+    override fun checkAndChangeFavourites(favouriteWord: String): Single<TranslatedEntity> {
         return dictionaryRepository
             .findCurrentWord(favouriteWord)
-            .doOnSuccess {
-                it.apply { isFavourite = !isFavourite }
-                dictionaryRepository.updateIsFavouriteState(it).subscribe()
-            }.map {
-                it.isFavourite
-            }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun deleteFavouriteFromDictionary(entity: TranslatedEntity): Completable =
@@ -39,14 +34,11 @@ class TranslatorInteractorImpl @Inject constructor(
         textForTranslation: String,
         fromLanguage: String,
         toLanguage: String,
-    ): Maybe<TranslatedWord> =
+    ): Single<TranslatedWord> =
         translService
             .getTranslation(textForTranslation)
             .subscribeOn(Schedulers.io())
-            .flatMapMaybe { Maybe.just(it.get(0)) }
-            .doOnSuccess {
-                dictionaryRepository.addToDictionary(it).subscribe()
-            }
+            .flatMap { Single.just(it.get(0)) }
 
     override fun getDictionaryWords(): Observable<TranslatedEntity> =
         dictionaryRepository.getWordsFromRepo()
@@ -58,4 +50,7 @@ class TranslatorInteractorImpl @Inject constructor(
 
     override fun deleteWordFromDictionary(entity: TranslatedEntity): Completable =
         dictionaryRepository.deleteFromDictionary(entity)
+
+    override fun addWordToDictionary(translatedWord: TranslatedWord): Completable =
+        dictionaryRepository.addToDictionary(translatedWord)
 }

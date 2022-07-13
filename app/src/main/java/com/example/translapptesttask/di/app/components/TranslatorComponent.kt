@@ -7,6 +7,7 @@ import com.example.translapptesttask.di.app.providers.DictionaryProvider
 import com.example.translapptesttask.di.app.components.TranslationDependencies
 import com.example.translapptesttask.di.app.providers.TranslatorInteractorsProvider
 import com.example.translapptesttask.di.app.modules.TranslatorModule
+import com.example.translapptesttask.di.app.providers.DaoProvider
 import com.example.translapptesttask.di.app.providers.RetrofitServiceProvider
 import com.example.translapptesttask.presentation.presenters.TranslatorPresenter
 import dagger.Component
@@ -16,6 +17,7 @@ import dagger.Component
         RetrofitServiceProvider::class,
         TranslatorInteractorsProvider::class,
         DictionaryProvider::class,
+        DaoProvider::class,
         TranslatorModule::class,
         AppModule::class
     ],

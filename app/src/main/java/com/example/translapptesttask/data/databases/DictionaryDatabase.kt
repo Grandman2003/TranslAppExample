@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.core_app_api.models.TranslatedEntity
 
-@Database(entities = [TranslatedEntity::class], version = 1)
+@Database(entities = [TranslatedEntity::class], version = 1, exportSchema = true)
 abstract class DictionaryDatabase : RoomDatabase() {
     abstract fun dictionaryDao(): DictionaryDao
     companion object {

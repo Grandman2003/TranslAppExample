@@ -45,6 +45,12 @@ class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
     }
 
     fun configuring() {
+        setInputTranslationChain()
+        setDictionarySearchLine()
+        setupViews()
+    }
+
+    private fun setInputTranslationChain() =
         RxTextView.textChanges(binding.inputText)
             .debounce(500, TimeUnit.MILLISECONDS)
             .switchMap {
@@ -65,16 +71,14 @@ class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
                 )
             }, {}, { translPresenter.emptyInputField() }).addToBag()
 
+    private fun setDictionarySearchLine() =
         RxTextView.textChanges(binding.searchDict)
             .debounce(500, TimeUnit.MILLISECONDS)
             .subscribe({
                 translPresenter.findInDictionary(it.toString())
             }, {}).addToBag()
 
-        binding.toFavouritesButton.setOnClickListener {
-            translPresenter.toFavouriteScreen()
-        }
-
+    private fun setupViews() {
         with(binding.fromLangSpinner) {
             val adapterFrom: ArrayAdapter<*> = ArrayAdapter
                 .createFromResource(context, R.array.languagesFrom, android.R.layout.simple_list_item_1)
@@ -122,7 +126,7 @@ class TranslateActivity : MvpAppCompatActivity(), TranslatorView {
         binding.translatedText.text = resultText
     }
 
-    override fun showRequsetError() {
+    override fun showRequestError() {
         Snackbar.make(binding.root, R.string.trans_error, Snackbar.LENGTH_LONG).show()
     }
 

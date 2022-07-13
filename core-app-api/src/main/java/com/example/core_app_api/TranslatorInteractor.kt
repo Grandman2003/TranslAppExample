@@ -8,14 +8,15 @@ import io.reactivex.Observable
 import io.reactivex.Single
 
 interface TranslatorInteractor {
-    fun checkAndChangeFavourites(favouriteWord: String): Single<Boolean>
+    fun checkAndChangeFavourites(favouriteWord: String): Single<TranslatedEntity>
     fun deleteFavouriteFromDictionary(entity: TranslatedEntity): Completable
     fun proceedTranslationRequest(
         textForTranslation: String,
         fromLanguage: String,
         toLanguage: String,
-    ): Maybe<TranslatedWord>
+    ): Single<TranslatedWord>
     fun getDictionaryWords(): Observable<TranslatedEntity>
     fun findSimilarInDictionary(partString: String): Observable<TranslatedEntity>
     fun deleteWordFromDictionary(entity: TranslatedEntity): Completable
+    fun addWordToDictionary(translatedWord: TranslatedWord): Completable
 }

@@ -6,12 +6,13 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.example.core_app_api.models.TranslatedEntity
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
 interface DictionaryDao {
     @Query("SELECT*FROM dictionary")
-    fun getAllWords(): Single<List<TranslatedEntity>>
+    fun getAllWords(): Observable<List<TranslatedEntity>>
 
     @Query(
         "SELECT (CASE WHEN EXISTS(SELECT 1 FROM dictionary" +

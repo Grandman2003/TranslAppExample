@@ -2,24 +2,45 @@ package com.example.translapptesttask.presentation.presenters
 
 import com.example.core_app_api.TranslatorInteractor
 import com.example.core_app_api.models.TranslatedEntity
+import com.example.core_app_api.models.TranslatedWord
 import com.example.feature_favourite_api.FavouriteFeatureAPI
 import com.example.translapptesttask.presentation.view.translator.TranslatorView
 import com.github.terrakok.cicerone.Router
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class TranslatorPresenter : MvpPresenter<TranslatorView>() {
+class TranslatorPresenter() : MvpPresenter<TranslatorView>() {
     @Inject lateinit var router: Router
     @Inject lateinit var translatorInteractor: TranslatorInteractor
     @Inject lateinit var favouriteApi: FavouriteFeatureAPI
 
+    private val androidScheduler by lazy { AndroidSchedulers.mainThread() }
+    private var testScheduler: Scheduler? = null
+    private val uiScheduler: Scheduler
+        get() = when (testScheduler == null) {
+            true -> androidScheduler
+            else -> testScheduler!!
+        }
+
     private val disposeBag: CompositeDisposable = CompositeDisposable()
+
+    constructor(
+        router: Router,
+        translatorInteractor: TranslatorInteractor,
+        favouriteFeatureAPI: FavouriteFeatureAPI,
+        scheduler: Scheduler
+    ) : this() {
+        this.router = router
+        this.favouriteApi = favouriteFeatureAPI
+        this.translatorInteractor = translatorInteractor
+        this.testScheduler = scheduler
+    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -29,6 +50,11 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
     override fun attachView(view: TranslatorView?) {
         super.attachView(view)
         updateDictionary()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposeBag.clear()
     }
 
     private fun updateDictionary() {
@@ -45,21 +71,15 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
     ) {
         translatorInteractor
             .proceedTranslationRequest(textForTranslation, fromLanguage, toLanguage)
-            .observeOn(AndroidSchedulers.mainThread())
-            .doAfterSuccess {
-                translatorInteractor
-                    .findSimilarInDictionary(it.text)
-                    .toList().subscribe { singleList ->
-                        viewState.setAsFavourite(singleList.get(0).isFavourite)
-                    }.addToBag()
-            }
+            .observeOn(uiScheduler)
             .subscribe(
                 {
-                    viewState.showTranslation(it?.meanings?.get(0)?.translation?.text ?: " ")
+                    addToDictionaryAndCheckFavourite(it)
                     updateDictionary()
+                    viewState.showTranslation(it?.meanings?.get(0)?.translation?.text ?: " ")
                 },
                 {
-                    viewState.showRequsetError()
+                    viewState.showRequestError()
                 }
             ).addToBag()
     }
@@ -67,13 +87,11 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
     fun setAsFavourite(textFavouriteWord: String) {
         translatorInteractor.run {
             checkAndChangeFavourites(textFavouriteWord)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doAfterSuccess { isFavourite ->
-                    viewState.setAsFavourite(isFavourite)
-                    updateDictionary()
-                }.subscribe(
-                    {},
+                .observeOn(uiScheduler)
+                .subscribe(
+                    { currentWord ->
+                        setFavouriteStatus(currentWord)
+                    },
                     { error ->
                         viewState.showFavouriteError()
                     }
@@ -103,11 +121,33 @@ class TranslatorPresenter : MvpPresenter<TranslatorView>() {
     fun deleteFromDictionary(entity: TranslatedEntity) {
         translatorInteractor
             .deleteWordFromDictionary(entity)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(uiScheduler)
             .subscribe({
                 updateDictionary()
-            },{
-
-            }).addToBag()
+            }) {
+                viewState.setDeletingError()
+            }.addToBag()
     }
+
+    private fun setFavouriteStatus(currentWord: TranslatedEntity) =
+        translatorInteractor
+            .deleteFavouriteFromDictionary(currentWord)
+            .observeOn(uiScheduler)
+            .subscribe {
+                viewState.setAsFavourite(currentWord.isFavourite)
+                updateDictionary()
+            }.addToBag()
+
+    private fun addToDictionaryAndCheckFavourite(currentWord: TranslatedWord) =
+        translatorInteractor
+            .addWordToDictionary(currentWord)
+            .observeOn(uiScheduler)
+            .subscribe {
+                translatorInteractor
+                    .findSimilarInDictionary(currentWord.text)
+                    .toList().subscribe { singleList ->
+                        viewState.setAsFavourite(singleList.get(0).isFavourite)
+                        updateDictionary()
+                    }.addToBag()
+            }.addToBag()
 }
