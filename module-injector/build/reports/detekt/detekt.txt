@@ -1,0 +1,3 @@
+PackageNaming - [ComponentHolder.kt] at C:\Users\goykhman\AndroidStudioProjects\TranslAppTestTask\module-injector\src\main\java\com\example\module_injector\ComponentHolder.kt:1:1 - Signature=ComponentHolder.kt$package com.example.module_injector
+PackageNaming - [ExampleUnitTest.kt] at C:\Users\goykhman\AndroidStudioProjects\TranslAppTestTask\module-injector\src\test\java\com\example\module_injector\ExampleUnitTest.kt:1:1 - Signature=ExampleUnitTest.kt$package com.example.module_injector
+NewLineAtEndOfFile - [ExampleUnitTest.kt] at C:\Users\goykhman\AndroidStudioProjects\TranslAppTestTask\module-injector\src\test\java\com\example\module_injector\ExampleUnitTest.kt:17:2 - Signature=ExampleUnitTest.kt$com.example.module_injector.ExampleUnitTest.kt
