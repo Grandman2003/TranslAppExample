@@ -7,16 +7,12 @@ import com.example.feature_favourite_api.FavouriteFeatureAPI
 import com.example.translapptesttask.presentation.view.translator.TranslatorView
 import com.example.translapptesttask.presentation.view.translator.`TranslatorView$$State`
 import com.github.terrakok.cicerone.Router
-import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import io.reactivex.disposables.Disposable
+import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.TestScheduler
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -31,6 +27,7 @@ class TranslatorPresenterTest {
     @MockK private lateinit var translatorViewState: `TranslatorView$$State`
 
     private lateinit var observeScheduler: Scheduler
+    private lateinit var observer: TestObserver<TranslatedWord>
     private lateinit var translatorPresenterPrivate: TranslatorPresenter
     private lateinit var translatorPresenter: TranslatorPresenter
 
@@ -38,6 +35,7 @@ class TranslatorPresenterTest {
     fun setUp() {
         MockKAnnotations.init(this)
         observeScheduler = TestScheduler()
+        observer = TestObserver<TranslatedWord>()
         val mockDisposable = mockk<List<TranslatedEntity>>()
         val answerSingle = Single.just(
             spyk(
@@ -50,7 +48,8 @@ class TranslatorPresenterTest {
             favouriteFeatureAPI = favouriteFeatureAPI,
             translatorInteractor = interactor,
             router = ciceroneRouter,
-            scheduler = observeScheduler
+            scheduler = observeScheduler,
+            observer = observer
         )
         translatorPresenter =
             spyk<TranslatorPresenter>(translatorPresenterPrivate, recordPrivateCalls = true)
@@ -81,8 +80,8 @@ class TranslatorPresenterTest {
 
         every {
             interactor.proceedTranslationRequest(any(), any(), any()).observeOn(observeScheduler)
-                .subscribe(any(), any())
-        } returns mockk<Disposable>()
+                .subscribe(observer)
+        } just Runs
     }
 
     @Test
@@ -111,7 +110,8 @@ class TranslatorPresenterTest {
             verify { interactor.proceedTranslationRequest(any(), any(), any()) }
             verify { tranlatorView.setDictionaryElements(any()) }
             verify(exactly = 0) { tranlatorView.showRequestError() }
-            verify { interactor.proceedTranslationRequest(any(), any(), any()).observeOn(observeScheduler).subscribe(any(), any()) }
+            verify { interactor.proceedTranslationRequest(any(), any(), any()).observeOn(observeScheduler).subscribe(observer) }
+            observer.assertNoErrors()
         }
     }
 }

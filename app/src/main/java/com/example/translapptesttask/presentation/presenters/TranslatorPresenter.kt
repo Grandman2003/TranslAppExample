@@ -7,6 +7,7 @@ import com.example.feature_favourite_api.FavouriteFeatureAPI
 import com.example.translapptesttask.presentation.view.translator.TranslatorView
 import com.github.terrakok.cicerone.Router
 import io.reactivex.Scheduler
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -21,11 +22,33 @@ class TranslatorPresenter() : MvpPresenter<TranslatorView>() {
     @Inject lateinit var favouriteApi: FavouriteFeatureAPI
 
     private val androidScheduler by lazy { AndroidSchedulers.mainThread() }
+    private val defaultObserver by lazy {
+        object : SingleObserver<TranslatedWord> {
+            override fun onSuccess(word: TranslatedWord) {
+                addToDictionaryAndCheckFavourite(word)
+                updateDictionary()
+                viewState.showTranslation(word?.meanings?.get(0)?.translation?.text ?: " ")
+            }
+
+            override fun onError(e: Throwable) {
+                viewState.showRequestError()
+            }
+            override fun onSubscribe(d: Disposable) {}
+        }
+    }
     private var testScheduler: Scheduler? = null
+    private var testObserver: SingleObserver<TranslatedWord>? = null
+
     private val uiScheduler: Scheduler
         get() = when (testScheduler == null) {
             true -> androidScheduler
             else -> testScheduler!!
+        }
+
+    private val currentObserver
+        get() = when (testObserver == null) {
+            true -> defaultObserver
+            else -> testObserver!!
         }
 
     private val disposeBag: CompositeDisposable = CompositeDisposable()
@@ -34,12 +57,14 @@ class TranslatorPresenter() : MvpPresenter<TranslatorView>() {
         router: Router,
         translatorInteractor: TranslatorInteractor,
         favouriteFeatureAPI: FavouriteFeatureAPI,
-        scheduler: Scheduler
+        scheduler: Scheduler,
+        observer: SingleObserver<TranslatedWord>
     ) : this() {
         this.router = router
         this.favouriteApi = favouriteFeatureAPI
         this.translatorInteractor = translatorInteractor
         this.testScheduler = scheduler
+        this.testObserver = observer
     }
 
     override fun onFirstViewAttach() {
@@ -72,16 +97,16 @@ class TranslatorPresenter() : MvpPresenter<TranslatorView>() {
         translatorInteractor
             .proceedTranslationRequest(textForTranslation, fromLanguage, toLanguage)
             .observeOn(uiScheduler)
-            .subscribe(
-                {
-                    addToDictionaryAndCheckFavourite(it)
-                    updateDictionary()
-                    viewState.showTranslation(it?.meanings?.get(0)?.translation?.text ?: " ")
-                },
-                {
-                    viewState.showRequestError()
-                }
-            ).addToBag()
+            .subscribe(currentObserver)
+//                {
+//                    addToDictionaryAndCheckFavourite(it)
+//                    updateDictionary()
+//                    viewState.showTranslation(it?.meanings?.get(0)?.translation?.text ?: " ")
+//                },
+//                {
+//                    viewState.showRequestError()
+//                }
+            //).addToBag()
     }
 
     fun setAsFavourite(textFavouriteWord: String) {
