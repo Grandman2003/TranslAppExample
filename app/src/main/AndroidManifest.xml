@@ -16,6 +16,8 @@
         android:theme="@style/Theme.TranslAppTestTask"
         tools:targetApi="31">
         <activity
+            android:name="com.example.feature_favourite_impl.presentation.view.favourites.FavouritesActivity"/>
+        <activity
             android:name=".presentation.view.translator.TranslateActivity"
             android:exported="true">
             <intent-filter>

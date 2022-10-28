@@ -10,10 +10,13 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
+
 rootProject.name = "TranslAppTestTask"
 include ':app'
 include ':feature-favourite-api'
 include ':feature-favourite-impl'
 include ':core-app-api'
+include ':module-injector'

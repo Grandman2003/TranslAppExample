@@ -21,6 +21,7 @@
         app:titleTextColor="@color/white">
 
         <TextView
+            android:id="@+id/head_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -28,7 +29,9 @@
             android:fontFamily="@font/montserrat_alternates_semibold_italic"
             android:text="@string/app_name"
             android:textColor="@color/white"
-            android:textSize="28sp" />
+            android:textSize="28sp"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="9dp" />
 
         <ImageButton
             android:id="@+id/to_favourites_button"
@@ -50,12 +53,14 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/materialButton"
+            android:id="@+id/lang_change_button"
             android:layout_width="50dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            app:strokeColor="@color/kasp_dygreen"
             android:layout_marginStart="15dp"
             app:backgroundTint="@color/kasp_dygreen"
             app:cornerRadius="10dp"
+            android:background="@drawable/arrows_lang"
             app:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/to_lang"
             app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +79,7 @@
             app:cardCornerRadius="30dp"
             app:cardElevation="10dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/materialButton"
+            app:layout_constraintStart_toEndOf="@+id/lang_change_button"
             app:layout_constraintTop_toTopOf="parent"
             app:strokeColor="@color/kasp_dygreen"
             app:strokeWidth="2dp">
@@ -129,12 +134,12 @@
             android:gravity="start|top"
             android:layout_marginStart="10dp"
             app:cardElevation="10dp"
-            android:id="@+id/cardview6"
-            app:layout_constraintBottom_toBottomOf="@+id/cardView5"
-            app:layout_constraintEnd_toStartOf="@+id/cardView5"
+            android:id="@+id/input_field_card"
+            app:layout_constraintBottom_toBottomOf="@+id/output_field_card"
+            app:layout_constraintEnd_toStartOf="@+id/output_field_card"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cardView5">
+            app:layout_constraintTop_toTopOf="@+id/output_field_card">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/input_text"
@@ -148,7 +153,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardView5"
+            android:id="@+id/output_field_card"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
@@ -158,7 +163,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_min="230dp"
             app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toEndOf="@id/cardview6"
+            app:layout_constraintStart_toEndOf="@id/input_field_card"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -166,11 +171,11 @@
                 android:layout_height="match_parent">
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/lang_field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:text="TextView"
+                   android:hint="@string/lang_field"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -180,68 +185,72 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="20dp"
-                    android:text="TextView"
+                    android:hint="@string/transl_field"
                     android:textAlignment="textStart"
                     android:textSize="30sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/textView3"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                    app:layout_constraintStart_toStartOf="@+id/lang_field"
+                    app:layout_constraintTop_toBottomOf="@+id/lang_field" />
 
                 <ImageButton
-                    android:id="@+id/favButton"
+                    android:id="@+id/is_it_favourite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:background="@drawable/ic_baseline_star_off"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView3"
+                    app:layout_constraintBottom_toBottomOf="@+id/lang_field"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView3" />
+                    app:layout_constraintTop_toTopOf="@+id/lang_field" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView5" >
+            app:layout_constraintTop_toBottomOf="@+id/output_field_card">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView6"
+                    android:id="@+id/dict_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/dict_string"
-                    android:textSize="20sp"
                     android:layout_margin="15dp"
+                    android:fontFamily="@font/montserrat_alternates_bold"
+                    android:text="@string/dict_string"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/editTextTextPersonName"
+                    android:id="@+id/search_dict"
                     android:layout_width="0dp"
-                    android:layout_marginEnd="15dp"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
+                    android:layout_marginEnd="15dp"
                     android:hint="@string/search_in_dic"
+                    android:inputType="textPersonName"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/textView6"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                    app:layout_constraintStart_toStartOf="@+id/dict_title"
+                    app:layout_constraintTop_toBottomOf="@+id/dict_title" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="0dp"
+                    android:id="@+id/dict_list"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    tools:listitem="@layout/dict_item"
                     android:layout_marginHorizontal="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+                    app:layout_constraintTop_toBottomOf="@+id/search_dict"
+                    tools:listitem="@layout/dict_item" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,29 @@
 package com.example.translapptesttask.presentation.view.translator
 
+import com.example.core_app_api.models.TranslatedEntity
 import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.AddToEndStrategy
-import moxy.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.alias.AddToEndSingle
+import moxy.viewstate.strategy.alias.OneExecution
 
-interface TranslatorView: MvpView {
-    @StateStrategyType(value = AddToEndStrategy::class)
+interface TranslatorView : MvpView {
+    @AddToEndSingle
     fun showTranslation(resultText: String)
 
-    @StateStrategyType(value = AddToEndSingleStrategy::class)
-    fun showRequsetError()
+    @OneExecution
+    fun showRequestError()
+
+    @OneExecution
+    fun showFavouriteError()
+
+    @OneExecution
+    fun setAsFavourite(isFavourite: Boolean)
+
+    @OneExecution
+    fun setDeletingError()
+
+    @AddToEndSingle
+    fun setDictionaryElements(entityList: List<TranslatedEntity>)
+
+    @OneExecution
+    fun cleanOutputField()
 }

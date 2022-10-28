@@ -1,6 +1,6 @@
 package com.example.translapptesttask.data.net.interfaces
 
-import com.example.translapptesttask.data.net.respmodels.TranslatedWord
+import com.example.core_app_api.models.TranslatedWord
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

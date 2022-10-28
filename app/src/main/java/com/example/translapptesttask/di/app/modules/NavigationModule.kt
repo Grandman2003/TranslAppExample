@@ -9,13 +9,16 @@ import javax.inject.Singleton
 
 @Module
 class NavigationModule {
+    @Singleton
     @Provides
     fun getCicerone(): Cicerone<Router> = Cicerone.create()
 
+    @Singleton
     @Provides
     @Inject
     fun getRouter(cicerone: Cicerone<Router>): Router = cicerone.router
 
+    @Singleton
     @Provides
     @Inject
     fun getNavigationHolder(cicerone: Cicerone<Router>) = cicerone.getNavigatorHolder()
